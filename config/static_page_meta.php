@@ -6,9 +6,10 @@
  * 
  * usage:
  * 'page' => array(
-            'description' => '',
-            'keywords'    => ''
-        )
+ *          'description' => '',
+ *          'keywords'    => '',
+ *          'robots'      => ''
+ *      )
  */
 return array(
     'default' => array(
