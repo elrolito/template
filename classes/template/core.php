@@ -104,6 +104,16 @@ class Template_Core {
 	}
 
     /**
+     * Return the default staic page for root (/)
+     *
+     * @return string
+     */
+    public function default_page()
+    {
+        return $this->_config['pages']['default'];
+    }
+
+    /**
      * Return the default template title for site
      *
      * @return string title

@@ -13,7 +13,7 @@ class Controller_Static extends Controller_Template_Base {
 
     public function action_view()
     {
-        $page = $this->request->param('page');
+        $page = $this->request->param('page', Template::instance()->default_page());
 
         if (Kohana::find_file('views', 'pages/'.$page))
         {
@@ -39,6 +39,11 @@ class Controller_Static extends Controller_Template_Base {
                 if (preg_match('/description|keywords|robots/', $key))
                 {
                     $this->_meta[$key] = $value;
+                }
+                else if ($key == 'title')
+                {
+                    // override default template title
+                    $this->template->title = $value;
                 }
             }
         }
