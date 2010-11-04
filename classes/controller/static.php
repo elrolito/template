@@ -42,19 +42,5 @@ class Controller_Static extends Controller_Template_Base {
                 }
             }
         }
-        /*
-        if (isset($meta[$page]['description']))
-        {
-            $this->_meta['description'] = $meta[$page]['description'];
-        }
-        if (isset($meta[$page]['keywords']))
-        {
-            $this->_meta['keywords'] = $meta[$page]['keywords'];
-        }
-        if (isset($meta[$page]['robots']))
-        {
-            $this->_meta['robots'] = $meta[$page]['robots'];
-        }
-        */
     }
 } // End Controller_Static
