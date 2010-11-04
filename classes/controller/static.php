@@ -15,12 +15,30 @@ class Controller_Static extends Controller_Template_Base {
     {
         $page = $this->request->param('page');
 
-        if (Kohana::find_file('views', 'pages/static/'.$page))
+        if (Kohana::find_file('views', 'pages/'.$page))
         {
             $this->template->title = ucfirst($page).' | '.  Template::instance()->title();
 
             $this->_content = View::factory('pages/'.$page);
+            
+            $this->_get_meta($page);
         }
         
+    }
+
+    private function _get_meta($page)
+    {
+        // load config for current theme
+        $meta = Kohana::config('static_page_meta.'.Template::$theme);
+
+        // check for meta for current page
+        if (isset($meta[$page]['description']))
+        {
+            $this->_meta['description'] = $meta[$page]['description'];
+        }
+        if (isset($meta[$page]['keywords']))
+        {
+            $this->_meta['keywords'] = $meta[$page]['keywords'];
+        }
     }
 } // End Controller_Static
