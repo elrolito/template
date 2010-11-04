@@ -19,7 +19,7 @@ class Controller_Static extends Controller_Template_Base {
         {
             $this->template->title = ucfirst($page).' | '.  Template::instance()->title();
 
-            $this->_content = View::factory('pages/static/'.$page);
+            $this->_content = View::factory('pages/'.$page);
         }
         
     }
