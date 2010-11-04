@@ -32,6 +32,17 @@ class Controller_Static extends Controller_Template_Base {
         $meta = Kohana::config('static_page_meta.'.Template::$theme);
 
         // check for meta for current page
+        if (isset($meta[$page]))
+        {
+            foreach ($meta[$page] as $key => $value)
+            {
+                if (preg_match('/description|keywords|robots/', $key))
+                {
+                    $this->_meta[$key] = $value;
+                }
+            }
+        }
+        /*
         if (isset($meta[$page]['description']))
         {
             $this->_meta['description'] = $meta[$page]['description'];
@@ -40,5 +51,10 @@ class Controller_Static extends Controller_Template_Base {
         {
             $this->_meta['keywords'] = $meta[$page]['keywords'];
         }
+        if (isset($meta[$page]['robots']))
+        {
+            $this->_meta['robots'] = $meta[$page]['robots'];
+        }
+        */
     }
 } // End Controller_Static

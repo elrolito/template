@@ -18,6 +18,7 @@
 
     <?php if ( ! empty($meta['description'])): ?><meta name="description" content="<?php echo $meta['description'] ?>">
     <?php endif; if ( ! empty($meta['keywords'])): ?><meta name="keywords" content="<?php echo $meta['keywords'] ?>">
+    <?php endif; if ( ! empty($meta['robots'])): ?><meta name="robots" content="<?php echo $meta['robots'] ?>">
     <?php endif; echo $head ?>
 
 </head>
