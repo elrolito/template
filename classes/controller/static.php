@@ -40,5 +40,9 @@ class Controller_Static extends Controller_Template_Base {
         {
             $this->_meta['keywords'] = $meta[$page]['keywords'];
         }
+        if (isset($meta[$page]['robots']))
+        {
+            $this->_meta['robots'] = $meta[$page]['robots'];
+        }
     }
 } // End Controller_Static
