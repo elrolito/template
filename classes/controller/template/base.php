@@ -42,9 +42,9 @@ abstract class Controller_Template_Base extends  Controller_Template {
             $this->template->title = Template::instance()->title();
 
             $this->template->bind('content', $this->_content)
-                    ->bind('head', $_template['head'])
+                    ->bind('head', $this->_template['head'])
                     ->bind('meta', $this->_meta)
-                    ->bind('body_scripts', $_template['body_scripts']);
+                    ->bind('body_scripts', $this->_template['body_scripts']);
         }
 	}
 
