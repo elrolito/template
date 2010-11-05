@@ -13,11 +13,11 @@ class Controller_Static extends Controller_Template_Base {
 
     public function action_view()
     {
-        $page = $this->request->param('page');
+        $page = $this->request->param('page', Template::instance()->default_page());
 
         if (Kohana::find_file('views', 'pages/'.$page))
         {
-            $this->template->title = ucfirst($page).' | '.  Template::instance()->title();
+            $this->template->title = ucwords(Inflector::humanize($page)).' | '.  Template::instance()->title();
 
             $this->_content = View::factory('pages/'.$page);
             
@@ -40,21 +40,12 @@ class Controller_Static extends Controller_Template_Base {
                 {
                     $this->_meta[$key] = $value;
                 }
+                else if ($key == 'title')
+                {
+                    // override default template title
+                    $this->template->title = $value;
+                }
             }
         }
-        /*
-        if (isset($meta[$page]['description']))
-        {
-            $this->_meta['description'] = $meta[$page]['description'];
-        }
-        if (isset($meta[$page]['keywords']))
-        {
-            $this->_meta['keywords'] = $meta[$page]['keywords'];
-        }
-        if (isset($meta[$page]['robots']))
-        {
-            $this->_meta['robots'] = $meta[$page]['robots'];
-        }
-        */
     }
 } // End Controller_Static
