@@ -11,49 +11,31 @@
  */
 class Controller_Template_Page extends Controller_Template_Base {
 
-	/**
-	 * Automatically executed before the controller action. Can be used to set
-	 * class properties, do authorization checks, and execute other custom code.
-	 *
-	 */
-	public function before()
-	{
-		// Before code here
-		parent::before();
+    public function before()
+    {
+        parent::before();
 
-        // automatically set content view
-        $this->_content = $this->_get_content();
-	}
+        if ($this->auto_render)
+        {
+            $this->template->content = $this->_get_view();
+        }
+    }
 
-	/**
-	 * Default action method for the controller
-	 *
-	 * @return  void
-	 */
-	public function action_index()
-	{
-		// Default action code here
-		$this->template->title = ucfirst($this->request->controller).' | '.  Template::instance()->title();
-	}
+    public function action_static()
+    {
+        $page = $this->request->param('page', 'home');
 
-	/**
-	 * Automatically executed after the controller action. Can be used to apply
-	 * transformation to the request response, add extra output, and execute
-	 * other custom code.
-	 *
-	 */
-	public function after()
-	{
-		// After code here
-		parent::after();
-	}
+        $this->template->title = ucwords(Inflector::humanize($page)).' | '.$this->template->title;
+
+        $this->_get_meta($page);
+    }
 
     /**
-     * Try to set template content to view based on controller and action
+     * Try to set template content to view based on request
      *
-     * @return view content based on controller
+     * @return view content
      */
-    private function _get_content()
+    protected function _get_view()
     {
         $directory = $this->request->directory;
 
@@ -63,13 +45,37 @@ class Controller_Template_Page extends Controller_Template_Base {
         $controller = $this->request->controller;
         $action = $this->request->action;
 
-        if (Kohana::find_file('views', 'pages/'.$directory.$controller.'/'.$action))
-        {
-            if ($action != 'index')
-                $this->template->title = ucwords($action.' | '.$controller).' | '.Template::instance()->title();
+        if ($action != 'static')
+            $view_file = $directory.$controller.'/'.$action;
+        else
+            $view_file = $this->request->param('page', 'home');
 
-            return View::factory('pages/'.$directory.$controller.'/'.$action);
+        if (Kohana::find_file('views', 'pages/'.$view_file))
+        {
+            return View::factory('pages/'.$view_file);
         }
     }
 
+    private function _get_meta($page)
+    {
+        // load config for current theme
+        $meta = Kohana::config('static_page_meta');
+
+        // check for meta for current page
+        if (isset($meta[$page]))
+        {
+            foreach ($meta[$page] as $key => $value)
+            {
+                if (preg_match('/description|keywords|robots/', $key))
+                {
+                    $this->template->meta[$key] = $value;
+                }
+                else if ($key == 'title')
+                {
+                    // override default template title
+                    $this->template->title = $value;
+                }
+            }
+        }
+    }
 } // End Controller_Template_Page

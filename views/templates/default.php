@@ -3,10 +3,10 @@
 /**
  * Default View
  *
- * @package    test
+ * @package    Template
  * @category   View
- * @author     rolo
- * @copyright (c) 2010 rolo
+ * @author     Rolando Henry
+ * @copyright (c) 2010 Rolando Henry
  * @license    http://creativecommons.org/licenses/BSD/
  */
 ?><!doctype html>
@@ -16,10 +16,16 @@
 
     <title><?php echo $title ?></title>
 
-    <?php if ( ! empty($meta['description'])): ?><meta name="description" content="<?php echo $meta['description'] ?>">
-    <?php endif; if ( ! empty($meta['keywords'])): ?><meta name="keywords" content="<?php echo $meta['keywords'] ?>">
-    <?php endif; if ( ! empty($meta['robots'])): ?><meta name="robots" content="<?php echo $meta['robots'] ?>">
-    <?php endif; echo $head ?>
+    <?php
+    /* page meta, styles and scripts */
+    foreach ($meta as $key => $value): 
+        if ($value != '') :?><meta name="<?php echo $key ?>" content="<?php echo $value ?>">
+    <?php endif; endforeach;
+    echo $styles ?>
+
+    <?php echo $scripts['head'] ?>
+
+    <?php echo Template::ie_shiv() ?>
 
 </head>
 <body>
@@ -28,7 +34,7 @@
       echo $content;
 
       // where most of the scripts will load
-      echo $body_scripts;
+      echo $scripts['body'];
 
       // Profiler stats for developer environment
       if (Kohana::$environment === Kohana::DEVELOPMENT)
