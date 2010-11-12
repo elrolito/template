@@ -10,11 +10,10 @@ return array(
                 // 'file' => 'media'
             ),
         'scripts' => array(
-            
-            'top' => array(
+            'head' => array(
                 // 'file'
             ),
-            'bottom' => array(
+            'body' => array(
                 //'file'
             ),
         ),

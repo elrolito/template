@@ -38,7 +38,7 @@ class Template_Core {
         {
             if ($config === NULL)
             {
-                $config = Kohana::config('template.'.$name);
+                $config = Kohana::config('template')->$name;
 
                 if (empty($config))
                 {
@@ -84,7 +84,7 @@ class Template_Core {
     protected function  __construct($name, array $config)
     {
         // Set the instance name
-		$this->_instance = $name;
+        $this->_instance = $name;
 
         // Store the config locally
         $this->_config = $config;
@@ -94,14 +94,24 @@ class Template_Core {
     }
 
     /**
-     * Return Template instance name
+     * Get current theme config
      *
-     * @return string instance name
+     * @return array config
      */
-    final public function __toString()
-	{
-		return $this->_instance;
-	}
+    public function config()
+    {
+        return $this->_config;
+    }
+
+    /**
+     * Return regex list of static pages
+     *
+     * @return string
+     */
+    public function static_pages()
+    {
+        return $this->_config['pages']['regex'];
+    }
 
     /**
      * Return the default staic page for root (/)
@@ -114,84 +124,12 @@ class Template_Core {
     }
 
     /**
-     * Return the default template title for site
+     * Return Template instance name
      *
-     * @return string title
+     * @return string instance name
      */
-    public function title($page_title = null, $use_uppercase = false)
+    final public function __toString()
     {
-        if ($page_title === null)
-            return $this->_config['title'];
-        else
-        {
-            $title = $page_title.$this->_config['title'];
-            return $use_uppercase ? strtoupper($title) : ucwords($title);
-        }
-    }
-
-    /**
-     * Creates HTML links for css and scripts
-     *
-     * @uses HTML::style
-     * @uses HTML::script
-     * @param array additional styles to add
-     * @param array additional scripts to add
-     * @return string stylesheets and scripts for head
-     */
-    public function head(array $additional_styles = NULL, array $additional_scripts = NULL)
-    {
-        $style_html = '';
-        $script_html = '';
-
-        // merge page styles to template styles if passed
-        if ( ! empty($additional_styles) AND Arr::is_assoc($additional_styles))
-            $styles = Arr::merge($this->_config['styles'], $additional_styles);
-        else
-            $styles = $this->_config['styles'];
-
-        foreach ($styles as $file => $media)
-        {
-            $style_html .= HTML::style($file, array('media' => $media))."\r\n\t\t";
-        }
-
-        // merge page scripts to template scripts if passed
-        if ( isset($additional_scripts['top']) AND ! empty($additional_scripts['top']))
-            $scripts = Arr::merge ($this->_config['scripts']['top'], $additional_scripts);
-        else
-            $scripts = $this->_config['scripts']['top'];
-
-        foreach ($scripts as $file)
-        {
-            $script_html .= HTML::script($file)."\r\n\t\t";
-        }
-
-        $this->_head_html = $style_html.$script_html;
-
-        return $this->_head_html;
-    }
-
-    /**
-     * Create HTML scripts for use at the bottom, just before </body>
-     *
-     * @uses HTML::script
-     * @param array additional scripts to add
-     * @return string scripts for bottom of body
-     */
-    public function body_scripts(array $additional_scripts = NULL)
-    {
-        $script_html = '';
-
-        // merge page scripts to template scripts if passed
-        if ( isset($additional_scripts['bottom']) AND ! empty($additional_scripts['bottom']))
-            $scripts = Arr::merge ($this->_config['scripts']['bottom'], $additional_scripts);
-        else
-            $scripts = $this->_config['scripts']['bottom'];
-
-        foreach ($scripts as $file)
-        {
-            $script_html .= HTML::script($file)."\r\n\t\t";
-        }
-
-        return $script_html;
+        return $this->_instance;
     }
 } // End Template_Core
