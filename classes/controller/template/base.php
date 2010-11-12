@@ -11,8 +11,6 @@
  */
 abstract class Controller_Template_Base extends  Controller_Template {
 
-    public $template = 'templates/'.Template::$theme;
-
     public function __construct(Request $req)
     {
         parent::__construct($req);
@@ -22,6 +20,8 @@ abstract class Controller_Template_Base extends  Controller_Template {
 
     public function before()
     {
+        $this->template = 'templates/'.Template::$theme;
+        
         // open external links in new window
         HTML::$windowed_urls = true;
 
