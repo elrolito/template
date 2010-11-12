@@ -1,10 +1,9 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
-$config = Kohana::config('template.'.Template::$theme);
-
-Route::set('static', '(<page>)', array('page' => $config['pages']['regex']))
+Route::set('static', '(<page>)', array('page' => Template::instance()->static_pages()))
         ->defaults(array(
-            'controller' => 'static',
-            'action'     => 'view',
-            'page'       => $config['pages']['default']
+            'directory'  => 'template',
+            'controller' => 'page',
+            'action'     => 'static',
+            'page'       => Template::instance()->default_page()
         ));

@@ -11,63 +11,87 @@
  */
 abstract class Controller_Template_Base extends  Controller_Template {
 
-    public $template = 'templates/default';
+    public $template = 'templates/'.Template::$theme;
 
-    protected $_content;
+    public function __construct(Request $req)
+    {
+        parent::__construct($req);
 
-    protected $_styles = array();
-    protected $_scripts = array('head' => array(), 'body' => array());
+        $this->_config = Template::instance()->config();
+    }
 
-    protected $_meta = array('description' => '', 'keywords' => '');
+    public function before()
+    {
+        // open external links in new window
+        HTML::$windowed_urls = true;
 
-    private $_template = array(
-            'head' => '',
-            'body_scripts' => ''
-        );
-
-	/**
-	 * Automatically executed before the controller action. Can be used to set
-	 * class properties, do authorization checks, and execute other custom code.
-	 *
-	 */
-	public function before()
-	{
-		HTML::$windowed_urls = true;
-        
-		parent::before();
+        parent::before();
 
         if ($this->auto_render)
         {
-            // init the template and bind variables
-            $this->template->title = Template::instance()->title();
+            $config = $this->_config;
 
-            $this->template->bind('content', $this->_content)
-                    ->bind('head', $this->_template['head'])
-                    ->bind('meta', $this->_meta)
-                    ->bind('body_scripts', $this->_template['body_scripts']);
+            $this->template->title = $config['title'];
+
+            $this->template->meta = array(
+                    'description' => '',
+                    'keywords'    => '',
+                    'robots'      => ''
+                );
+
+            $this->template->styles = array();
+
+            $this->template->scripts = array(
+                    'head' => array(),
+                    'body' => array()
+                );
         }
-	}
+    }
 
-	/**
-	 * Automatically executed after the controller action. Can be used to apply
-	 * transformation to the request response, add extra output, and execute
-	 * other custom code.
-	 *
-	 */
-	public function after()
-	{
-		// Set all template info
+    public function after()
+    {
+        if (Request::$is_ajax OR $this->request !== Request::instance())
+        {
+            $this->auto_render = false;
+            $this->request->response = $this->template->content;
+        }
+
         if ($this->auto_render)
         {
-            $this->_template['head'] = Template::instance()->head($this->_styles, $this->_scripts['head']);
-            $this->_template['body_scripts'] = Template::instance()->body_scripts($this->_scripts['body']);
-        }
-        else if (Request::$is_ajax OR $this->request !== Request::instance())
-        {
-            // just show the content view
-            $this->request->response = $this->_content;
+            $this->_compile_assets();
         }
 
-		parent::after();
+        parent::after();
+    }
+
+    protected function _compile_assets()
+    {
+        $config = $this->_config;
+
+        $styles = Arr::merge($this->template->styles, $config['styles']);
+        $scripts = Arr::merge($this->template->scripts, $config['scripts']);
+
+        $style_assets = array();
+
+        foreach ($styles as $file => $media)
+        {
+            $style_assets[] = HTML::style($file, array('media' => $media));
+        }
+
+        $script_assets = array('head' => array(), 'body' => array());
+
+        foreach ($scripts['head'] as $file)
+        {
+            $script_assets['head'][] = HTML::script($file);
+        }
+
+        foreach ($scripts['body'] as $file)
+        {
+            $script_assets['body'][] = HTML::script($file);
+        }
+
+        $this->template->styles = "\n    ".implode("\n    ", $style_assets);
+        $this->template->scripts['head'] = "\n    ".implode("\n    ", $script_assets['head']);
+        $this->template->scripts['body'] = "\n    ".implode("\n    ", $script_assets['body']);
     }
 } // End Controller_Template_Base
