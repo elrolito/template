@@ -53,7 +53,7 @@ abstract class Controller_Template_Base extends  Controller_Template {
         if (Request::$is_ajax OR $this->request !== Request::instance())
         {
             $this->auto_render = false;
-            $this->request->response = $this->template->content;
+            $this->response->body($this->template->content);
         }
 
         if ($this->auto_render)
@@ -67,16 +67,33 @@ abstract class Controller_Template_Base extends  Controller_Template {
     protected function _compile_assets()
     {
         $config = $this->_config;
-
-        $styles = Arr::merge($this->template->styles, $config['styles']);
-        $scripts = Arr::merge($this->template->scripts, $config['scripts']);
-
+        
+        // Styles
+        $styles = $config['styles'];
+        $css_styles = Arr::merge($styles['css'], $this->template->styles['css']);
+        
         $style_assets = array();
-
-        foreach ($styles as $file => $media)
+        
+        if ( ! empty($styles['less']))
+        {
+            $style_assets[] = HTML::style(LESS::compile($styles['less'], 'styles'), array('media' => 'all'));
+        }
+        
+        if ( ! empty($this->template->styles['less']))
+        {
+            foreach ($this->template->styles['less'] as $less)
+            {
+                $style_assets[] = HTML::style(LESS::compile(array('base', $less), $less), array('media' => 'all'));
+            }
+        }
+        
+        foreach ($css_styles as $file => $media)
         {
             $style_assets[] = HTML::style($file, array('media' => $media));
         }
+        
+        // Scripts
+        $scripts = Arr::merge($config['scripts'], $this->template->scripts);
 
         $script_assets = array('head' => array(), 'body' => array());
 
