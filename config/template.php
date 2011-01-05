@@ -7,7 +7,8 @@ return array(
     'default' => array(
         'title' => 'Website Title',
         'styles' => array(
-                // 'file' => 'media'
+                'css'  => array(),
+                'less' => array()
             ),
         'scripts' => array(
             'head' => array(

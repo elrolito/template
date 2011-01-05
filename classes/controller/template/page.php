@@ -37,13 +37,13 @@ class Controller_Template_Page extends Controller_Template_Base {
      */
     protected function _get_view()
     {
-        $directory = $this->request->directory;
+        $directory = $this->request->directory();
 
         if ($directory != '')
             $directory .= '/';
 
-        $controller = $this->request->controller;
-        $action = $this->request->action;
+        $controller = $this->request->controller();
+        $action = $this->request->action();
 
         if ($action != 'static')
             $view_file = $directory.$controller.'/'.$action;

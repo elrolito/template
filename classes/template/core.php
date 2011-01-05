@@ -63,7 +63,7 @@ class Template_Core {
      */
     public static function ie_shiv()
     {
-        $user_agent = Request::instance()->user_agent(array('browser', 'version'));
+        $user_agent = Request::user_agent(array('browser', 'version'));
 
         if ($user_agent['browser'] === 'Internet Explorer' AND (int) $user_agent['version'] < 9)
         {

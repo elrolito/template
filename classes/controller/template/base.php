@@ -11,9 +11,9 @@
  */
 abstract class Controller_Template_Base extends  Controller_Template {
 
-    public function __construct(Request $req)
+    public function __construct(Request $req, Response $response)
     {
-        parent::__construct($req);
+        parent::__construct($req, $response);
 
         $this->_config = Template::instance()->config();
     }
@@ -39,7 +39,10 @@ abstract class Controller_Template_Base extends  Controller_Template {
                     'robots'      => ''
                 );
 
-            $this->template->styles = array();
+            $this->template->styles = array(
+                    'css'  => array(),
+                    'less' => array()
+                );
 
             $this->template->scripts = array(
                     'head' => array(),
@@ -50,7 +53,7 @@ abstract class Controller_Template_Base extends  Controller_Template {
 
     public function after()
     {
-        if (Request::$is_ajax OR $this->request !== Request::instance())
+        if ($this->request->is_ajax() OR ! $this->request->is_initial())
         {
             $this->auto_render = false;
             $this->response->body($this->template->content);
